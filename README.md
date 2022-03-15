@@ -1,7 +1,8 @@
 # Very Bad Web application
 
-This is an example web application written in Rust. Do not run this in any network connected system, and use it only in VMs to learn about security
-implications of bad code.
+This is an example web application written in Rust, which contains a lot of
+security issues. Do not run this in any network connected system, and use it
+only in VMs to learn about security implications of bad code.
 
 
 
