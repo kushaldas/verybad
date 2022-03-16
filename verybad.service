@@ -1,0 +1,12 @@
+[Unit]
+Description=Very Bad Web Application
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/web/amazing
+ExecStart=/usr/sbin/verybad
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
