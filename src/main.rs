@@ -3,7 +3,7 @@ extern crate rocket;
 use std::fs::File;
 use std::io::prelude::*;
 use std::process::Command;
-use std::{fs, str};
+use std::{env, fs, str};
 
 #[get("/<path>")]
 fn getpath(path: &str) -> String {
@@ -32,13 +32,19 @@ fn getos() -> String {
 }
 
 #[get("/")]
-fn index() -> &'static str {
-    "Example of poorly written code.
+fn index() -> String {
+    let path = env::current_dir().unwrap();
+    let ps = path.display();
+    format!(
+        "Example of poorly written code.
     GET /getos -> will give the details of the OS.
     GET /filename -> will provide a file from the current directory
     GET /exec/date -> will give you the current date & time in the server.
     POST /filename -> Saves the data in filename.
-    "
+    Code is running in: {}
+    ",
+        ps
+    )
 }
 
 #[post("/<filename>", data = "<input>")]
