@@ -7,7 +7,7 @@ use std::{fs, str};
 
 #[get("/<path>")]
 fn getpath(path: &str) -> String {
-    println!("{}", path);
+    println!("GETPATH: {}", path);
     let data = fs::read_to_string(path).expect("Can not read the given path");
     data
 }
@@ -39,6 +39,7 @@ fn index() -> &'static str {
 
 #[post("/<filename>", data = "<input>")]
 fn new(filename: &str, input: Vec<u8>) -> String {
+    println!("POST: filename: {}", filename);
     let mut tfile = File::create(filename).unwrap();
     tfile.write_all(&input).unwrap();
     "Okay".to_owned()
