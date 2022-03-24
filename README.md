@@ -12,7 +12,7 @@ only in VMs to learn about security implications of bad code.
 - GET /filename -> will provide the file from the current directory.
 - GET /getos -> will give you details about your server.
 - GET /exec/date -> will tell you the time on the server.
-- POST /filename -> will save the input data in `/tmp/filename` and returns `Okay`.
+- POST /filename -> will save the input data in `filename` and returns `Okay`.
 
 
 ## Building and running

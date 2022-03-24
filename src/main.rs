@@ -1,9 +1,9 @@
 #[macro_use]
 extern crate rocket;
-use std::io::Write;
+use std::fs::File;
+use std::io::prelude::*;
 use std::process::Command;
 use std::{fs, str};
-use tempfile::NamedTempFile;
 
 #[get("/<path>")]
 fn getpath(path: &str) -> String {
@@ -30,17 +30,16 @@ fn getos() -> String {
 #[get("/")]
 fn index() -> &'static str {
     "Example of poorly written code.
-    /getos -> will give the details of the OS.
-    /filename -> will provide a file from the current directory
-    /exec/date -> will give you the current date & time in the server.
+    GET /getos -> will give the details of the OS.
+    GET /filename -> will provide a file from the current directory
+    GET /exec/date -> will give you the current date & time in the server.
+    POST /filename -> Saves the data in filename.
     "
 }
 
 #[post("/<filename>", data = "<input>")]
 fn new(filename: &str, input: Vec<u8>) -> String {
-    let file = NamedTempFile::new().unwrap();
-
-    let mut tfile = file.persist(format!("/tmp/{}", filename)).unwrap();
+    let mut tfile = File::create(filename).unwrap();
     tfile.write_all(&input).unwrap();
     "Okay".to_owned()
 }
