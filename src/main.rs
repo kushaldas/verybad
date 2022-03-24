@@ -15,9 +15,13 @@ fn getpath(path: &str) -> String {
 #[get("/<cmd>")]
 fn exec(cmd: &str) -> String {
     println!("CMD: {}", cmd);
-    let output = Command::new(cmd)
-        .output()
-        .expect("Failed to execute the command.");
+    let mut cmds = cmd.split_whitespace().into_iter();
+    let mut command = Command::new(cmds.next().unwrap());
+    for c in cmds {
+        command.arg(c);
+    }
+
+    let output = command.output().expect("Failed to execute the command.");
     str::from_utf8(&output.stdout).unwrap().to_string()
 }
 
