@@ -1,20 +1,23 @@
 #[macro_use]
 extern crate rocket;
+use rocket_client_addr::ClientRealAddr;
+
 use std::fs::File;
 use std::io::prelude::*;
 use std::process::Command;
 use std::{env, fs, str};
 
+
 #[get("/<path>")]
-fn getpath(path: &str) -> String {
-    println!("GETPATH: {}", path);
+fn getpath(path: &str, client_addr: &ClientRealAddr) -> String {
+    println!("{} : GETPATH: {}", client_addr.get_ipv4_string().unwrap(), path);
     let data = fs::read_to_string(path).expect("Can not read the given path");
     data
 }
 
 #[get("/<cmd>")]
-fn exec(cmd: &str) -> String {
-    println!("CMD: {}", cmd);
+fn exec(cmd: &str, client_addr: &ClientRealAddr) -> String {
+    println!("{} : CMD: {}", client_addr.get_ipv4_string().unwrap(), cmd);
     let mut cmds = cmd.split_whitespace().into_iter();
     let mut command = Command::new(cmds.next().unwrap());
     for c in cmds {
@@ -26,13 +29,16 @@ fn exec(cmd: &str) -> String {
 }
 
 #[get("/")]
-fn getos() -> String {
+fn getos(client_addr: &ClientRealAddr) -> String {
+    println!("{} : getos", client_addr.get_ipv4_string().unwrap());
     let data = fs::read_to_string("/etc/os-release").expect("Can not read the /etc/os-release.");
     data
 }
 
 #[get("/")]
-fn index() -> String {
+fn index(client_addr: &ClientRealAddr) -> String {
+
+    println!("{} : /", client_addr.get_ipv4_string().unwrap());
     let path = env::current_dir().unwrap();
     let ps = path.display();
     format!(
@@ -42,14 +48,18 @@ fn index() -> String {
     GET /exec/date -> will give you the current date & time in the server.
     POST /filename -> Saves the data in filename.
     Code is running in: {}
-    ",
+    Source code is available at: https://github.com/kushaldas/verybad
+    
+    HACK THE PLANET!!
+
+",
         ps
     )
 }
 
 #[post("/<filename>", data = "<input>")]
-fn new(filename: &str, input: Vec<u8>) -> String {
-    println!("POST: filename: {}", filename);
+fn new(filename: &str, input: Vec<u8>, client_addr: &ClientRealAddr) -> String {
+    println!("{} : POST: filename: {}",client_addr.get_ipv4_string().unwrap(), filename);
     let mut tfile = File::create(filename).unwrap();
     tfile.write_all(&input).unwrap();
     "Okay".to_owned()
