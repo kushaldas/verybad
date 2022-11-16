@@ -86,5 +86,5 @@ fn rocket() -> _ {
         .mount("/", routes![new])
         .mount("/getos", routes![getos])
         .mount("/exec/", routes![exec])
-        .mount("/.well-known/security.txt", routes![getsecuritytxt])
+        .mount("/", routes![getsecuritytxt])
 }
