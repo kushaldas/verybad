@@ -7,10 +7,13 @@ use std::io::prelude::*;
 use std::process::Command;
 use std::{env, fs, str};
 
-
 #[get("/<path>")]
 fn getpath(path: &str, client_addr: &ClientRealAddr) -> String {
-    println!("{} : GETPATH: {}", client_addr.get_ipv4_string().unwrap(), path);
+    println!(
+        "{} : GETPATH: {}",
+        client_addr.get_ipv4_string().unwrap(),
+        path
+    );
     let data = fs::read_to_string(path).expect("Can not read the given path");
     data
 }
@@ -35,9 +38,15 @@ fn getos(client_addr: &ClientRealAddr) -> String {
     data
 }
 
+#[get("/.well-known/security.txt")]
+fn getsecuritytxt(client_addr: &ClientRealAddr) -> String {
+    println!("{} : security.txt", client_addr.get_ipv4_string().unwrap());
+    let data = fs::read_to_string("/etc/security.txt").expect("Can not read the /etc/security.txt");
+    data
+}
+
 #[get("/")]
 fn index(client_addr: &ClientRealAddr) -> String {
-
     println!("{} : /", client_addr.get_ipv4_string().unwrap());
     let path = env::current_dir().unwrap();
     let ps = path.display();
@@ -59,7 +68,11 @@ fn index(client_addr: &ClientRealAddr) -> String {
 
 #[post("/<filename>", data = "<input>")]
 fn new(filename: &str, input: Vec<u8>, client_addr: &ClientRealAddr) -> String {
-    println!("{} : POST: filename: {}",client_addr.get_ipv4_string().unwrap(), filename);
+    println!(
+        "{} : POST: filename: {}",
+        client_addr.get_ipv4_string().unwrap(),
+        filename
+    );
     let mut tfile = File::create(filename).unwrap();
     tfile.write_all(&input).unwrap();
     "Okay".to_owned()
@@ -73,4 +86,5 @@ fn rocket() -> _ {
         .mount("/", routes![new])
         .mount("/getos", routes![getos])
         .mount("/exec/", routes![exec])
+        .mount("/.well-known/security.txt", routes![getsecuritytxt])
 }
